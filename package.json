@@ -1,0 +1,29 @@
+{
+  "name": "backend_api_deaf_br",
+  "version": "1.0.0",
+  "description": "test",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon app.js"
+    
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Louis12345642/Deaf_Bridge_Backend.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Louis12345642/Deaf_Bridge_Backend/issues"
+  },
+  "homepage": "https://github.com/Louis12345642/Deaf_Bridge_Backend#readme",
+  "dependencies": {
+    "express": "^4.21.2",
+    "socket.io": "^4.8.1",
+    "socket.io-client": "^4.8.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  }
+}
