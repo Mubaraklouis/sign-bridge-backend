@@ -1,22 +1,22 @@
-
-const express = require("express");
 require("dotenv").config();
-const app = express();
-const cors = require("cors");
-const bodyParser = require("body-parser");
-const mongoose = require("mongoose");
 
 const authenticate = require("./middleware/authenticate");
+const ngrok = process.env.ENABLE_TUNNEL ? require("ngrok") : false;
 
 const connectDB = require("./config/db");
 const User = require("./models/user");
+
+// Middleware
+app.use(cors());
+app.use(express.json());
+app.use(bodyParser.json());
+
+const server = http.createServer(app);
 
 // const authenticate = require("./middleware/authMiddleware");
 const PORT = process.env.PORT || 8080;
 
 connectDB();
-
-const jsonParser = bodyParser.json();
 
 app.get("/", async (req, res) => {
   const message = "Hello World";
@@ -77,65 +77,68 @@ const corsOptions = {
   origin: "*",
   optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
 };
-app.listen(PORT, () => {
-  console.log(`app listening on port ${PORT}`);
-});
-app.use(bodyParser.json());
-app.use(cors(corsOptions));
-=======
-const express = require('express');
-const http = require('http');
-const { Server } = require('socket.io');
-const cors = require('cors');
 
-const app = express();
-const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: '*', // Allow all origins (for development)
-    methods: ['GET', 'POST'], // Allowed HTTP methods
+    origin: "*", // Allow all origins (for development)
+    methods: ["GET", "POST"], // Allowed HTTP methods
   },
 });
 
-// Middleware
-app.use(cors());
-app.use(express.json());
+app.use(cors(corsOptions));
 
 // API Routes
-app.get('/api/message', (req, res) => {
-  res.json({ message: 'Hello from the API!' });
+app.get("/api/message", (req, res) => {
+  res.json({ message: "Hello from the API!" });
 });
 
-app.post('/api/send-message', (req, res) => {
+app.post("/api/send-message", (req, res) => {
   const { message } = req.body;
   if (!message) {
-    return res.status(400).json({ error: 'Message is required' });
+    return res.status(400).json({ error: "Message is required" });
   }
 
   // Emit the message to all connected Socket.IO clients
-  io.emit('message', message);
-  res.json({ success: true, message: 'Message sent to all clients' });
+  io.emit("message", message);
+  res.json({ success: true, message: "Message sent to all clients" });
 });
 
 // Socket.IO Connection
-io.on('connection', (socket) => {
-  console.log('A user connected:', socket.id);
+io.on("connection", (socket) => {
+  console.log("A user connected:", socket.id);
 
   // Handle incoming messages from clients
-  socket.on('message', (data) => {
-    console.log('Received message:', data);
+  socket.on("message", (data) => {
+    console.log("Received message:", data);
     // Broadcast the message to all clients
-    io.emit('message', data);
+    io.emit("message", data);
   });
 
   // Handle disconnection
-  socket.on('disconnect', () => {
-    console.log('A user disconnected:', socket.id);
+  socket.on("disconnect", () => {
+    console.log("A user disconnected:", socket.id);
   });
 });
 
-// Start the server
-const PORT = process.env.PORT || 4000;
 server.listen(PORT, () => {
+  // if (ngrok) {
+  //   ngrok.connect(PORT, (err, url) => {
+  //     if (err) {
+  //       return console.log(err);
+  //     }
+  //     console.log(`Server started. Tunnel running at url ${url}`);
+  //   });
+  // } else {
+  //   console.log(`Server is running on http://localhost:${PORT}`);
+  // }
   console.log(`Server is running on http://localhost:${PORT}`);
+
+  ngrok
+    .connect(PORT)
+    .then((ngrokUrl) => {
+      console.log(`Ngrok tunnel in: ${ngrokUrl}`);
+    })
+    .catch((error) => {
+      console.log("Couldn't tunnel");
+    });
 });
