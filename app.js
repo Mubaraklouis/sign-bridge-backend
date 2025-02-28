@@ -1,9 +1,8 @@
-
-const express = require('express');
-const http = require('http');
-const { Server } = require('socket.io');
-const cors = require('cors');
-const bodyParser = require('body-parser');
+const express = require("express");
+const http = require("http");
+const { Server } = require("socket.io");
+const cors = require("cors");
+const bodyParser = require("body-parser");
 require("dotenv").config();
 const authenticate = require("./middleware/authenticate");
 const ngrok = process.env.ENABLE_TUNNEL ? require("ngrok") : false;
@@ -14,30 +13,30 @@ const server = http.createServer(app);
 const jsonParser = require("body-parser").json();
 const io = new Server(server, {
   cors: {
-    origin: '*', // Allow all origins (for development)
-    methods: ['GET', 'POST'], // Allowed HTTP methods
+    origin: "*", // Allow all origins (for development)
+    methods: ["GET", "POST"], // Allowed HTTP methods
   },
 });
-
-
 
 // Store user sockets
 const users = {}; // { userId: socket }
 
+app.use(cors({ origin: "http://localhost:3000" }));
+
 // API Routes
-app.get('/api/message', (req, res) => {
-  res.json({ message: 'Hello from the API!' });
+app.get("/api/message", (req, res) => {
+  res.json({ message: "Hello from the API!" });
 });
 
-app.post('/api/send-message', (req, res) => {
+app.post("/api/send-message", (req, res) => {
   const { message, userId } = req.body;
   if (!message || !userId) {
-    return res.status(400).json({ error: 'Message and userId are required' });
+    return res.status(400).json({ error: "Message and userId are required" });
   }
 
   // Send the message to the specific user
   if (users[userId]) {
-    users[userId].emit('message', message);
+    users[userId].emit("message", message);
     res.json({ success: true, message: `Message sent to user ${userId}` });
   } else {
     res.status(404).json({ error: `User ${userId} not found` });
@@ -45,8 +44,8 @@ app.post('/api/send-message', (req, res) => {
 });
 
 // Socket.IO Connection
-io.on('connection', (socket) => {
-  console.log('A user connected:', socket.id);
+io.on("connection", (socket) => {
+  console.log("A user connected:", socket.id);
 
   // Assume the client sends a userId during connection
   const userId = socket.handshake.auth.userId; // Or use query parameters: socket.handshake.query.userId
@@ -57,13 +56,13 @@ io.on('connection', (socket) => {
   }
 
   // Handle incoming private messages from clients
-  socket.on('private-message', (data) => {
-    console.log('Received private message:', data);
+  socket.on("private-message", (data) => {
+    console.log("Received private message:", data);
     const { to, message } = data;
 
     // Check if the target user is connected
     if (users[to]) {
-      users[to].emit('message', message); // Send the message to the target user
+      users[to].emit("message", message); // Send the message to the target user
       console.log(`Message sent to user ${to}`);
     } else {
       console.log(`User ${to} not found`);
@@ -71,16 +70,14 @@ io.on('connection', (socket) => {
   });
 
   // Handle disconnection
-  socket.on('disconnect', () => {
-    console.log('A user disconnected:', socket.id);
+  socket.on("disconnect", () => {
+    console.log("A user disconnected:", socket.id);
     // Remove the user from the users object
     if (userId) {
       delete users[userId];
     }
   });
 });
-
-
 
 connectDB();
 
@@ -139,14 +136,19 @@ app.post("/api/register", jsonParser, async (req, res) => {
   res.sendStatus(200);
 });
 
-const corsOptions = {
-  origin: "*",
-  optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
-};
-
-
-
-app.use(cors(corsOptions));
+// const corsOptions = {
+//   origin: "http://localhost:3000",
+//   optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
+// };
+// app.use(
+//   cors({
+//     origin: ["http://localhost:3000", "http://10.26.114.167"],
+//     credentials: true,
+//     exposedHeaders: ["Content-Length", "X-Foo", "X-Bar"],
+//     preflightContinue: true,
+//   })
+// );
+// app.use(cors(corsOptions));
 
 // API Routes
 app.get("/api/message", (req, res) => {
@@ -181,19 +183,16 @@ io.on("connection", (socket) => {
   });
 });
 
-
-
 // Start the server
 const PORT = process.env.PORT || 4000;
 server.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
-    ngrok
-    .connect(PORT)
-    .then((ngrokUrl) => {
-      console.log(`Ngrok tunnel in: ${ngrokUrl}`);
-    })
-    .catch((error) => {
-      console.log("Couldn't tunnel");
-    });
+  console.log(`Server is running on http://10.39.204.206:${PORT}`);
+  // ngrok
+  //   .connect(PORT)
+  //   .then((ngrokUrl) => {
+  //     console.log(`Ngrok tunnel in: ${ngrokUrl}`);
+  //   })
+  //   .catch((error) => {
+  //     console.log("Couldn't tunnel");
+  //   });
 });
-
