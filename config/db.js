@@ -1,8 +1,6 @@
 const mongoose = require("mongoose");
 
 const uri = process.env.CONNECTION_STRING;
-const URI =
-  "***REMOVED***";
 
 const connectDB = async () => {
   try {
