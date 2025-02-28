@@ -12,7 +12,7 @@ const connectDB = require("./config/db");
 const User = require("./models/user");
 
 // const authenticate = require("./middleware/authMiddleware");
-const PORT = process.env.PORT || 80;
+const PORT = process.env.PORT || 8080;
 
 connectDB();
 
@@ -77,7 +77,7 @@ const corsOptions = {
   origin: "*",
   optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
 };
-app.listen(PORT, "10.39.204.206", () => {
+app.listen(PORT, () => {
   console.log(`app listening on port ${PORT}`);
 });
 app.use(bodyParser.json());
