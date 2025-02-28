@@ -3,9 +3,15 @@ const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
 const cors = require('cors');
-
+const bodyParser = require('body-parser');
+require("dotenv").config();
+const authenticate = require("./middleware/authenticate");
+const ngrok = process.env.ENABLE_TUNNEL ? require("ngrok") : false;
+const connectDB = require("./config/db");
+const User = require("./models/user");
 const app = express();
 const server = http.createServer(app);
+const jsonParser = require("body-parser").json();
 const io = new Server(server, {
   cors: {
     origin: '*', // Allow all origins (for development)
@@ -13,9 +19,7 @@ const io = new Server(server, {
   },
 });
 
-// Middleware
-app.use(cors());
-app.use(express.json());
+
 
 // Store user sockets
 const users = {}; // { userId: socket }
@@ -76,28 +80,7 @@ io.on('connection', (socket) => {
   });
 });
 
-// Start the server
-const PORT = process.env.PORT || 4000;
-server.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
-});
-require("dotenv").config();
 
-const authenticate = require("./middleware/authenticate");
-const ngrok = process.env.ENABLE_TUNNEL ? require("ngrok") : false;
-
-const connectDB = require("./config/db");
-const User = require("./models/user");
-
-// Middleware
-app.use(cors());
-app.use(express.json());
-app.use(bodyParser.json());
-
-const server = http.createServer(app);
-
-// const authenticate = require("./middleware/authMiddleware");
-const PORT = process.env.PORT || 8080;
 
 connectDB();
 
@@ -161,12 +144,7 @@ const corsOptions = {
   optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
 };
 
-const io = new Server(server, {
-  cors: {
-    origin: "*", // Allow all origins (for development)
-    methods: ["GET", "POST"], // Allowed HTTP methods
-  },
-});
+
 
 app.use(cors(corsOptions));
 
@@ -203,20 +181,13 @@ io.on("connection", (socket) => {
   });
 });
 
-server.listen(PORT, () => {
-  // if (ngrok) {
-  //   ngrok.connect(PORT, (err, url) => {
-  //     if (err) {
-  //       return console.log(err);
-  //     }
-  //     console.log(`Server started. Tunnel running at url ${url}`);
-  //   });
-  // } else {
-  //   console.log(`Server is running on http://localhost:${PORT}`);
-  // }
-  console.log(`Server is running on http://localhost:${PORT}`);
 
-  ngrok
+
+// Start the server
+const PORT = process.env.PORT || 4000;
+server.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
+    ngrok
     .connect(PORT)
     .then((ngrokUrl) => {
       console.log(`Ngrok tunnel in: ${ngrokUrl}`);
@@ -225,3 +196,4 @@ server.listen(PORT, () => {
       console.log("Couldn't tunnel");
     });
 });
+
