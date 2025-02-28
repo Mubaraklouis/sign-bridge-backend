@@ -1,6 +1,7 @@
 const express = require("express");
 require("dotenv").config();
 const app = express();
+const cors = require("cors");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 
@@ -10,7 +11,7 @@ const connectDB = require("./config/db");
 const User = require("./models/user");
 
 // const authenticate = require("./middleware/authMiddleware");
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 80;
 
 connectDB();
 
@@ -52,16 +53,18 @@ app.post("/api/login", jsonParser, async (req, res) => {
 
 // end-point for registering users
 app.post("/api/register", jsonParser, async (req, res) => {
-  const data = JSON.stringify(req.body);
-
   try {
-    console.log(data);
-    const user = new User({
-      username: req.body.username,
-      email: req.body.email,
-      password: req.body.password,
-    });
-    user.save();
+    const userDB = await User.findOne({ email: req.body.email });
+    if (userDB == null) {
+      const user = new User({
+        username: req.body.username,
+        email: req.body.email,
+        password: req.body.password,
+      });
+      user.save();
+    } else {
+      return res.sendStatus(400);
+    }
   } catch (e) {
     console.log("Error occured: ", e);
   }
@@ -69,7 +72,12 @@ app.post("/api/register", jsonParser, async (req, res) => {
   res.sendStatus(200);
 });
 
-app.listen(PORT, () => {
+const corsOptions = {
+  origin: "*",
+  optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
+};
+app.listen(PORT, "10.39.204.206", () => {
   console.log(`app listening on port ${PORT}`);
 });
 app.use(bodyParser.json());
+app.use(cors(corsOptions));
