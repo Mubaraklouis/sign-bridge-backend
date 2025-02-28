@@ -4,9 +4,10 @@ const app = express();
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 
+const authenticate = require("./middleware/authenticate");
+
 const connectDB = require("./config/db");
 const User = require("./models/user");
-const tokenGeneration = require("./middleware/generateToken");
 
 // const authenticate = require("./middleware/authMiddleware");
 const PORT = process.env.PORT || 5000;
@@ -28,16 +29,21 @@ app.post("/api/login", jsonParser, async (req, res) => {
   const data = JSON.stringify(req.body);
 
   try {
-    const userDB = await User.findOne({ email: data.email });
+    const userDB = await User.findOne({ email: req.body.email });
+
     if (userDB == null) {
       res.sendStatus(404);
     } else {
       console.log(userDB);
-      // generateAccessToken
-      const token = tokenGeneration.generateAccessToken({
-        email: userDB.email,
-      });
-      res.json({ accessToken: token });
+      const token = await authenticate.checkPassword(
+        `${req.body.password}`,
+        userDB
+      );
+      if (token) {
+        res.json({ accessToken: token });
+      } else {
+        return res.sendStatus(401);
+      }
     }
   } catch (e) {
     console.log(e);
@@ -46,10 +52,19 @@ app.post("/api/login", jsonParser, async (req, res) => {
 
 // end-point for registering users
 app.post("/api/register", jsonParser, async (req, res) => {
-  const data = req.body;
+  const data = JSON.stringify(req.body);
 
-  const user = await mongoose.User.create(data);
-  user.save();
+  try {
+    console.log(data);
+    const user = new User({
+      username: req.body.username,
+      email: req.body.email,
+      password: req.body.password,
+    });
+    user.save();
+  } catch (e) {
+    console.log("Error occured: ", e);
+  }
 
   res.sendStatus(200);
 });
