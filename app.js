@@ -8,6 +8,8 @@ const authenticate = require("./middleware/authenticate");
 const ngrok = process.env.ENABLE_TUNNEL ? require("ngrok") : false;
 const connectDB = require("./config/db");
 const User = require("./models/user");
+const Chat = require("./models/chatRoomModel");
+const Message = require("./models/messageModel");
 const app = express();
 const server = http.createServer(app);
 const jsonParser = require("body-parser").json();
@@ -105,7 +107,7 @@ app.post("/api/login", jsonParser, async (req, res) => {
         userDB
       );
       if (token) {
-        res.json({ accessToken: token });
+        res.json({ accessToken: token, user_id: userDB._id });
       } else {
         return res.sendStatus(401);
       }
