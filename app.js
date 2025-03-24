@@ -3,11 +3,9 @@ const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
 const cors = require('cors');
-const bodyParser = require('body-parser');
 require("dotenv").config();
 const authenticate = require("./middleware/authenticate");
-const ngrok = process.env.ENABLE_TUNNEL ? require("ngrok") : false;
-const connectDB = require("./config/db");
+// const connectDB = require("./config/db");
 const User = require("./models/user");
 const app = express();
 const server = http.createServer(app);
@@ -82,7 +80,7 @@ io.on('connection', (socket) => {
 
 
 
-connectDB();
+// connectDB();
 
 app.get("/", async (req, res) => {
   const message = "Hello World";
@@ -187,13 +185,6 @@ io.on("connection", (socket) => {
 const PORT = process.env.PORT || 4000;
 server.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
-    ngrok
-    .connect(PORT)
-    .then((ngrokUrl) => {
-      console.log(`Ngrok tunnel in: ${ngrokUrl}`);
-    })
-    .catch((error) => {
-      console.log("Couldn't tunnel");
-    });
+
 });
 
