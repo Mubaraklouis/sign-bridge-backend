@@ -1,6 +1,6 @@
 # Sign Bridge Backend :sign_language: → :speech_balloon:
 
-![Docker](https://hub.docker.com/repository/docker/mubaraklouis/signbridgebackend/general)
+![Docker](https://img.shields.io/badge/Docker-✓-blue?logo=docker)
 ![Kubernetes](https://img.shields.io/badge/Kubernetes-✓-326CE5?logo=kubernetes)
 ![Express.js](https://img.shields.io/badge/Express.js-✓-000000?logo=express)
 
@@ -33,8 +33,9 @@ Version: 1.0.0
 git clone https://github.com/your-username/sign-bridge-backend.git
 cd sign-bridge-backend
 ```
+Dockerhub link:<a href="https://hub.docker.com/repository/docker/mubaraklouis/signbridgebackend/general">signe-brigde-backend-image<a/>
 
 ### 1. Docker installation
 ```bash
-docker pull mubaraklouis/signbridgebackend
+docker pull mubaraklouis/signbridgebackend:1.1.0
 
