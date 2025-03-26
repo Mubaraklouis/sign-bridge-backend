@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sign-bridge-depl
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: sign-bridge-depl
+  template:
+    metadata:
+      labels:
+        app: sign-bridge-depl
+    spec:
+      containers:
+      - name: sign-bridge-depl
+        image: mubaraklouis/signbridgebackend:1.1.0
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 4000
