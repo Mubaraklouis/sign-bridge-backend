@@ -183,8 +183,8 @@ io.on("connection", (socket) => {
 app.get("/updates",(req,res)=>{
 
   res.json({
-    "message":"new updates with workflow",
-    "version":"6"
+    "message":"new updates with workflow version",
+    "version":"6.0.0"
   })
 
 })
