@@ -20,11 +20,11 @@ spec:
     spec:
       containers:
       - name: sign-bridge-depl
-        image: mubaraklouis/signbridgebackend:1.1.0
+        image: mubaraklouis/signbridgebackend:v4
         resources:
           limits:
             memory: "128Mi"
-            cpu: "500m"
+            cpu: "225m"
         ports:
         - containerPort: 4000
   
