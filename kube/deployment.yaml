@@ -4,12 +4,6 @@ metadata:
   name: sign-bridge-depl
 spec:
   replicas: 3
-  # Add rolling update strategy here
-  strategy:
-    type: RollingUpdate
-    rollingUpdate:
-      maxSurge: 25%          # Maximum new pods created (over desired count)
-      maxUnavailable: 25%    # Maximum pods unavailable during update
   selector:
     matchLabels:
       app: sign-bridge-depl
@@ -20,23 +14,10 @@ spec:
     spec:
       containers:
       - name: sign-bridge-depl
-        image: mubaraklouis/signbridgebackend:v3
+        image: mubaraklouis/signbridgebackend:latest
         resources:
           limits:
             memory: "128Mi"
             cpu: "500m"
         ports:
         - containerPort: 4000
-        # Add health checks (recommended)
-        livenessProbe:
-          httpGet:
-            path: /health
-            port: 4000
-          initialDelaySeconds: 15
-          periodSeconds: 10
-        readinessProbe:
-          httpGet:
-            path: /ready
-            port: 4000
-          initialDelaySeconds: 5
-          periodSeconds: 5
