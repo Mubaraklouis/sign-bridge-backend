@@ -180,6 +180,15 @@ io.on("connection", (socket) => {
 });
 
 
+app.get("/update/v3",(req,res)=>{
+
+  res.json({
+    "message":"new updates with workflow"
+  })
+
+})
+
+
 
 // Start the server
 const PORT = process.env.PORT || 4000;

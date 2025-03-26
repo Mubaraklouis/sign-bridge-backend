@@ -15,7 +15,4 @@ function authenticateToken(req, res, next) {
     if (err) return res.sendStatus(403);
 
     req.user = user;
-
-    next();
-  });
-}
+next(); }); }
