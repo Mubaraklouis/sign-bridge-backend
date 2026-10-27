@@ -27,4 +27,12 @@ spec:
             cpu: "225m"
         ports:
         - containerPort: 4000
+        env:
+        - name: NODE_ENV
+          value: production
+        # MONGODB_URI, TOKEN_SECRET (and optional EXPIRATION_TIME) come from a
+        # Secret created with kubectl -- see kube/secret.example.yaml.
+        envFrom:
+        - secretRef:
+            name: sign-bridge-secrets
   

@@ -1,0 +1,21 @@
+# gitleaks config: default rules plus project-specific ones the defaults miss.
+[extend]
+useDefault = true
+
+[[rules]]
+id = "mongodb-connection-string"
+description = "MongoDB connection string with embedded credentials"
+regex = '''mongodb(?:\+srv)?://[^:\s/"'`<]+:[^@\s"'`<]+@'''
+
+[[rules]]
+id = "env-file-secret"
+description = "Secret assigned in an env-style file (KEY=value)"
+regex = '''(?im)^\s*(?:export\s+)?(?:TOKEN_SECRET|JWT_SECRET|SECRET_KEY|MONGODB_URI|CONNECTION_STRING)\s*=\s*["']?([^\s"'<$]{8,})'''
+
+[[rules]]
+id = "hardcoded-secret-literal"
+description = "Secret hard-coded as a string literal"
+regex = '''(?i)(?:TOKEN_SECRET|JWT_SECRET|SECRET_KEY|MONGODB_URI|CONNECTION_STRING)["']?\s*[=:]\s*["'`]([^"'`<$\s]{8,})["'`]'''
+
+[allowlist]
+paths = ['''\.env\.example$''', '''kube/secret\.example\.yaml$''']

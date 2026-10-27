@@ -6,6 +6,7 @@ Dockerfile
 .git
 .gitignore
 .env
+.env.*
 .idea/
 .vscode/
 dist/

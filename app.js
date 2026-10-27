@@ -3,7 +3,7 @@ const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
 const cors = require('cors');
-require("dotenv").config();
+const config = require("./config/env");
 const authenticate = require("./middleware/authenticate");
 // const connectDB = require("./config/db");
 const User = require("./models/user");
@@ -192,7 +192,7 @@ app.get("/updates",(req,res)=>{
 
 
 // Start the server
-const PORT = process.env.PORT || 4000;
+const PORT = config.PORT;
 server.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 

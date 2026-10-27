@@ -35,6 +35,33 @@ cd sign-bridge-backend
 ```
 Dockerhub link:<a href="https://hub.docker.com/repository/docker/mubaraklouis/signbridgebackend/general">signe-brigde-backend-image<a/>
 
+## :key: Configuration
+
+All configuration and secrets are read from environment variables. Nothing secret is
+committed to this repository, and the app exits at startup with a clear error if a
+required variable is missing.
+
+| Variable          | Required | Default       | Description                                                      |
+|-------------------|----------|---------------|------------------------------------------------------------------|
+| `MONGODB_URI`     | yes      | –             | MongoDB connection string, e.g. `mongodb+srv://<user>:<password>@<cluster>/<db>` |
+| `TOKEN_SECRET`    | yes      | –             | Secret used to sign JWT access tokens. Generate with `openssl rand -hex 32` |
+| `EXPIRATION_TIME` | no       | `1h`          | JWT lifetime (any value accepted by `jsonwebtoken`, e.g. `15m`, `1h`, `7d`) |
+| `PORT`            | no       | `4000`        | HTTP port                                                        |
+| `NODE_ENV`        | no       | –             | Set to `production` in deployments; `.env` is only loaded when it is not `production` |
+
+**Local development:** `cp .env.example .env` and fill in real values. `.env` is git-ignored.
+
+**Kubernetes:** values come from the `sign-bridge-secrets` Secret (see `kube/secret.example.yaml`).
+Create it with `kubectl`; never commit a Secret with real values:
+```bash
+kubectl create secret generic sign-bridge-secrets \
+  --from-literal=MONGODB_URI='mongodb+srv://<user>:<password>@<cluster>/<db>' \
+  --from-literal=TOKEN_SECRET="$(openssl rand -hex 32)"
+```
+
+**GitHub Actions:** any secret a workflow needs is stored under *Settings → Secrets and variables → Actions*
+and referenced as `${{ secrets.NAME }}`, never read from files in the repo.
+
 ### 1. Docker installation
 ```bash
 docker pull mubaraklouis/signbridgebackend:1.1.0
