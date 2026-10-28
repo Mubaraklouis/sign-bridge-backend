@@ -30,10 +30,9 @@ Version: 1.0.0
 
 ### 1. Clone Repository
 ```bash
-git clone https://github.com/your-username/sign-bridge-backend.git
+git clone https://github.com/Mubaraklouis/sign-bridge-backend.git
 cd sign-bridge-backend
 ```
-Dockerhub link:<a href="https://hub.docker.com/repository/docker/mubaraklouis/signbridgebackend/general">signe-brigde-backend-image<a/>
 
 ## :key: Configuration
 
@@ -62,7 +61,11 @@ kubectl create secret generic sign-bridge-secrets \
 **GitHub Actions:** any secret a workflow needs is stored under *Settings → Secrets and variables → Actions*
 and referenced as `${{ secrets.NAME }}`, never read from files in the repo.
 
-### 1. Docker installation
+### 2. Run with Docker
 ```bash
-docker pull mubaraklouis/signbridgebackend:1.1.0
+docker build -t sign-bridge-backend .
+docker run --env-file .env -p 4000:4000 sign-bridge-backend
+```
+
+The image is not published to a public registry. For Kubernetes, push it to your own registry and set that image in `kube/deployment.yaml`.
 
